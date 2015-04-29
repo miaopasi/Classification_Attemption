@@ -111,6 +111,22 @@ class AdaboostClassification:
 
 		return clf, res, RMSE
 
+	def run_with_resample(self, train_data, test_data, display=True):
+		train_input = train_data.mat_res.mat
+		train_tar = train_data.mat_res.cls
+		test_input = test_data.mat_res.mat
+		test_tar = test_data.mat_res.cls
+		raw_coord = train_data.mat_res.cls_coord
+
+		# Resample Data to Acuumulate data
+
+		test_input = self.util.resample_data(test_input)
+
+		clf = self.learn_clf(train_input, train_tar, display)
+		res, RMSE = self.validate_clf(clf, test_input, test_tar, raw_coord, display)
+
+		return clf, res, RMSE
+
 
 
 
