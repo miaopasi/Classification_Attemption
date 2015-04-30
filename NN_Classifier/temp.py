@@ -1,9 +1,12 @@
-from loadfile import LoadData
+from loadfile import LoadWifiData
 import os
 from numpy import *
+from NN_Test_Class import *
+
+util = NeuralNetworkTest()
+load_in = LoadWifiData()
 
 
-load_in = LoadData()
 
 ori_path = "/Users/admin/Code/ProjectCode/Algorithm/Classification_Attemption/Data/wifidata"
 file_list = os.listdir(ori_path)
@@ -39,18 +42,21 @@ for x in floor_data:
 	print floor_data[x].wifi_bld_mat
 
 all_data_mat = zeros((TD, len(wifi_bld_list)))
-all_data_cls = zeros((TD,1))
-cls_pt = 1
+all_data_cls = zeros((TD, len(floor_data.keys())))
+
 pos_pt = 0
-for x in floor_data:
+cls_dict = {}
+
+for i,x in enumerate(floor_data):
 	D = floor_data[x].wifi_bld_mat.shape[0]
 	all_data_mat[pos_pt:pos_pt+D, :] = floor_data[x].wifi_bld_mat
+	all_data_cls[pos_pt:pos_pt+D, i] = 1
 	pos_pt += D
-	print "pos_pt : %s , pos_pt+D : %s" %(pos_pt, pos_pt+D)
-	all_data_cls[pos_pt:pos_pt+D, :] = cls_pt
-	cls_pt += 1
+	cls_dict[i] = x
 
 print all_data_cls
+
+net = util.fann_learn_save(all_data_mat, all_data_cls,  "wifi_floor.conf")
 
 
 

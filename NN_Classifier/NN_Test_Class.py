@@ -6,7 +6,7 @@ from fann2 import libfann
 import os
 
 
-class NeuralNetworkTest():
+class NeuralNetworkTest:
 	def __init__(self):
 		self.map_ratio = 100.0
 		self.m_min = -90.0
@@ -121,6 +121,7 @@ class NeuralNetworkTest():
 		input_layer_num = data.num_input_train_data()
 		output_layer_num = data.num_output_train_data()
 		hidden_layer_num = int(float(input_layer_num + output_layer_num) / 2.0)
+		print "Training Network With Params:\nInput: %s, Hidden: %s, Output: %s" %(input_layer_num, hidden_layer_num, output_layer_num)
 		net.create_sparse_array(1, (input_layer_num, hidden_layer_num, output_layer_num))
 		net.train_on_data(data, 8000, 10, 0.00001)
 		return net

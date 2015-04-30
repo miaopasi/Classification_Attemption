@@ -15,7 +15,7 @@ class DataStorage:
 		self.wifi_matrix = wifi_matrix
 
 
-class LoadData:
+class LoadWifiData:
 	"""
 		Generate Necessary Data For WiFI And Wp Files Extraction, including:
 			self.wp_filepath : filepath of wp
