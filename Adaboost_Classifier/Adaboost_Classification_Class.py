@@ -163,7 +163,7 @@ class AdaboostClassification:
 		clf = self.train_clf(clf, train_data, train_tar, display)
 		return clf
 
-	def run(self, train_data, test_data, display=True, resample=True, weight=True):
+	def run_ble(self, train_data, test_data, display=True, resample=True, weight=True):
 		train_input = train_data.mat_res.mat
 		train_tar = train_data.mat_res.cls
 		test_input = test_data.mat_res.mat

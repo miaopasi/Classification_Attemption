@@ -10,7 +10,7 @@ test_data = LoadData('../Data/testdata', None, data.marker_dict)
 adatest = AdaboostClassification()
 # clf, res, RMSE = adatest.run(data, test_data)
 
-clf, res, RMSE = adatest.run(data, test_data, True, True, True)
+clf, res, RMSE = adatest.run_ble(data, test_data, True, True, True)
 
 plt.hist(RMSE, 100)
 plt.show()
