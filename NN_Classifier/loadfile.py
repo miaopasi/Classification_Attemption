@@ -5,6 +5,16 @@ __version__ = "0.1.0"
 import numpy as np
 
 
+class DataStorage:
+	def __init__(self, wp_filepath, wifi_filepath, wifi_list, wp_pos, wp_ind, wifi_matrix):
+		self.wp_filepath = wp_filepath
+		self.wifi_filepath = wifi_filepath
+		self.wifi_list = wifi_list
+		self.wp_pos = wp_pos
+		self.wp_ind = wp_ind
+		self.wifi_matrix = wifi_matrix
+
+
 class LoadData:
 	"""
 		Generate Necessary Data For WiFI And Wp Files Extraction, including:
@@ -24,9 +34,11 @@ class LoadData:
 	def test_print(cls):
 		print "Successfully loaded"
 
-	@classmethod
-	def extract(cls, wp_filepath, wifi_filepath):
-		cls()._extract(wp_filepath, wifi_filepath)
+	# @classmethod
+	def extract(self, wp_filepath, wifi_filepath):
+		self._extract(wp_filepath, wifi_filepath)
+		data = DataStorage(wp_filepath, wifi_filepath, self.wifi_list, self.wp_pos, self.wp_ind, self.wifi_matrix)
+		return data
 
 	def _extract(self, wp_filepath, wifi_filepath):
 		wp_pos, wp_ind = self._extract_wp(wp_filepath)
