@@ -10,7 +10,10 @@ from math import *
 
 
 class ClassificationUtility:
+
 	def __init__(self):
+		self.map_ratio = 133.0
+		self.stack_depth = 3
 		pass
 
 	def accuracy(self, res_cls, cls, cls_pos):
@@ -21,7 +24,7 @@ class ClassificationUtility:
 			pos_res = array(cls_pos[cls_res])
 			pos_tar = array(cls_pos[cls_tar])
 			pos_diff = pos_res
-			se = sqrt(((pos_tar - pos_diff) ** 2).sum()) / 133.0
+			se = sqrt(((pos_tar - pos_diff) ** 2).sum()) / self.map_ratio
 			RMSE.append(se)
 		return RMSE
 
@@ -47,12 +50,67 @@ class ClassificationUtility:
 		re_data_mat = empty_like(data_mat)
 
 		for i in range(data_mat.shape[0]):
-			arr = self.stack_data(data_mat[max(0, i - 1):i + 1, :])
+			arr = self.stack_data(data_mat[max(0, i - self.stack_depth):i + 1, :])
 			re_data_mat[i, :] = arr[0]
 		return re_data_mat
 
+	def pos_weighted(self, w_arr, cls_pos):
+		t_pos = zeros(cls_pos[0].shape)
+		for i, w in enumerate(w_arr):
+			t_pos += cls_pos[i] * w
+		t_pos = t_pos / w_arr.sum()
+		return t_pos
+
+
+	def accuracy_weighted(self, res_proba, cls, cls_pos):
+		RMSE = []
+		for n in range(res_proba.shape[0]):
+			w_arr = res_proba[n,:]
+			pos_res = self.pos_weighted(w_arr, cls_pos)
+			pos_tar = cls_pos[cls[n]]
+			se = sqrt(((pos_tar - pos_res) ** 2).sum()) / self.map_ratio
+			RMSE.append(se)
+		return RMSE
+
+
+
 
 class AdaboostClassification:
+
+	"""
+	Dumped Method:
+
+
+	# def run_with_nothing(self, train_data, test_data, display=True):
+	# 	clf = self.learn_clf(train_input, train_tar, display)
+	# 	res, RMSE = self.validate_clf(clf, test_input, test_tar, raw_coord, display)
+	#
+	# 	return clf, res, RMSE
+	#
+	# def run_with_resample(self, train_data, test_data, display=True):
+	# 	# Resample Data to Acuumulate data
+	#
+	# 	test_input = self.util.resample_data(test_input)
+	#
+	# 	clf = self.learn_clf(train_input, train_tar, display)
+	# 	res, RMSE = self.validate_clf(clf, test_input, test_tar, raw_coord, display)
+	#
+	# 	return clf, res, RMSE
+	#
+	# def run_with_weight(self, train_data, test_data, display=True):
+	# 	clf = self.learn_clf(train_input, train_tar, display)
+	# 	res, RMSE = self.validate_clf_with_proba(clf, test_input, test_tar, raw_coord, display)
+	#
+	# 	return clf, res, RMSE
+
+
+
+
+	"""
+
+
+
+
 	def __init__(self):
 		self.util = ClassificationUtility()
 		self.DT_depth = 10
@@ -92,41 +150,38 @@ class AdaboostClassification:
 			print RMSE
 		return res, RMSE
 
+	def validate_clf_with_proba(self, clf, test_data, test_tar, raw_coord, display=True):
+		res_proba = clf.predict_proba(test_data)
+		RMSE = self.util.accuracy_weighted(res_proba, test_tar, raw_coord)
+		if display:
+			print "RMSE: %s, Var: %s, MAX: %s" % (mean(RMSE), std(RMSE), max(RMSE))
+			print RMSE
+		return res_proba, RMSE
+
 	def learn_clf(self, train_data, train_tar, display=True):
 		clf = self.init_classifier()
 		clf = self.train_clf(clf, train_data, train_tar, display)
 		return clf
 
-	def run(self, train_data, test_data, display=True):
+	def run(self, train_data, test_data, display=True, resample=True, weight=True):
 		train_input = train_data.mat_res.mat
 		train_tar = train_data.mat_res.cls
 		test_input = test_data.mat_res.mat
 		test_tar = test_data.mat_res.cls
 		raw_coord = train_data.mat_res.cls_coord
 
-		clf = self.learn_clf(train_input, train_tar, display)
-		res, RMSE = self.validate_clf(clf, test_input, test_tar, raw_coord, display)
+		if resample:
+			test_input = self.util.resample_data(test_input)
 
-		return clf, res, RMSE
+		if weight:
+			clf = self.learn_clf(train_input, train_tar, display)
+			res, RMSE = self.validate_clf_with_proba(clf, test_input, test_tar, raw_coord, display)
 
-	def run_with_resample(self, train_data, test_data, display=True):
-		train_input = train_data.mat_res.mat
-		train_tar = train_data.mat_res.cls
-		test_input = test_data.mat_res.mat
-		test_tar = test_data.mat_res.cls
-		raw_coord = train_data.mat_res.cls_coord
-
-		# Resample Data to Acuumulate data
-
-		test_input = self.util.resample_data(test_input)
-
-		clf = self.learn_clf(train_input, train_tar, display)
-		res, RMSE = self.validate_clf(clf, test_input, test_tar, raw_coord, display)
-
-		return clf, res, RMSE
-
-
-
+			return clf, res, RMSE
+		else:
+			clf = self.learn_clf(train_input, train_tar, display)
+			res, RMSE = self.validate_clf(clf, test_input, test_tar, raw_coord, display)
+			return clf, res, RMSE
 
 
 
