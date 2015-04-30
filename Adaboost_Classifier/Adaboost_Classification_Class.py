@@ -64,13 +64,11 @@ class AdaboostClassification:
 		                         learning_rate=self.learning_rate)
 		return clf
 
-	@classmethod
-	def redef_classifier(cls, base_classifier, num_estimator, learning_rate):
+	def redef_classifier(self, base_classifier, num_estimator, learning_rate):
 		clf = AdaBoostClassifier(base_classifier, n_estimators=num_estimator, learning_rate=learning_rate)
 		return clf
 
-	@classmethod
-	def train_clf(cls, clf, train_data, train_tar, display=True):
+	def train_clf(self, clf, train_data, train_tar, display=True):
 		clf.fit(train_data, train_tar)
 		if display:
 			st = time.time()
