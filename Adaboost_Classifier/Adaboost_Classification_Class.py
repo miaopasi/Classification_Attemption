@@ -55,9 +55,9 @@ class ClassificationUtility:
 		return re_data_mat
 
 	def pos_weighted(self, w_arr, cls_pos):
-		t_pos = zeros(cls_pos[0].shape)
+		t_pos = zeros(array(cls_pos[0]).shape)
 		for i, w in enumerate(w_arr):
-			t_pos += cls_pos[i] * w
+			t_pos += array(cls_pos[i]) * w
 		t_pos = t_pos / w_arr.sum()
 		return t_pos
 
