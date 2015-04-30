@@ -123,7 +123,7 @@ class NeuralNetworkTest:
 		hidden_layer_num = int(float(input_layer_num + output_layer_num) / 2.0)
 		print "Training Network With Params:\nInput: %s, Hidden: %s, Output: %s" %(input_layer_num, hidden_layer_num, output_layer_num)
 		net.create_sparse_array(1, (input_layer_num, hidden_layer_num, output_layer_num))
-		net.train_on_data(data, 8000, 10, 0.00001)
+		net.train_on_data(data, 8000, 10, 0.001)
 		return net
 
 	def fann_train_save(self, train_data, train_tar, net, savepath="./temp_save.conf"):
