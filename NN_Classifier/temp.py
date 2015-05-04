@@ -41,22 +41,24 @@ for x in floor_data:
 for x in floor_data:
 	print floor_data[x].wifi_bld_mat
 
-all_data_mat = zeros((TD, len(wifi_bld_list)))
-all_data_cls = zeros((TD, len(floor_data.keys())))
+savez("wifi_floor.npz", floor=floor_data)
 
-pos_pt = 0
-cls_dict = {}
-
-for i,x in enumerate(floor_data):
-	D = floor_data[x].wifi_bld_mat.shape[0]
-	all_data_mat[pos_pt:pos_pt+D, :] = floor_data[x].wifi_bld_mat
-	all_data_cls[pos_pt:pos_pt+D, i] = 1
-	pos_pt += D
-	cls_dict[i] = x
-
-print all_data_cls
-
-net = util.fann_learn_save(all_data_mat, all_data_cls,  "wifi_floor.conf")
+# all_data_mat = zeros((TD, len(wifi_bld_list)))
+# all_data_cls = zeros((TD, len(floor_data.keys())))
+#
+# pos_pt = 0
+# cls_dict = {}
+#
+# for i, x in enumerate(floor_data):
+# 	D = floor_data[x].wifi_bld_mat.shape[0]
+# 	all_data_mat[pos_pt:pos_pt+D, :] = floor_data[x].wifi_bld_mat
+# 	all_data_cls[pos_pt:pos_pt+D, i] = 1
+# 	pos_pt += D
+# 	cls_dict[i] = x
+#
+# print all_data_cls
+#
+# net = util.fann_learn_save(all_data_mat, all_data_cls,  "wifi_floor.conf")
 
 
 

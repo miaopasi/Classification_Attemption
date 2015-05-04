@@ -11,6 +11,9 @@ class NeuralNetworkTest:
 		self.map_ratio = 100.0
 		self.m_min = -90.0
 		self.m_max = -20.0
+		self.epocs = 8000
+		self.disp_round = 10
+		self.error_rate = 0.0001
 		pass
 
 	def update_data(self, train_data, test_data, train_tar):
@@ -123,7 +126,7 @@ class NeuralNetworkTest:
 		hidden_layer_num = int(float(input_layer_num + output_layer_num) / 2.0)
 		print "Training Network With Params:\nInput: %s, Hidden: %s, Output: %s" %(input_layer_num, hidden_layer_num, output_layer_num)
 		net.create_sparse_array(1, (input_layer_num, hidden_layer_num, output_layer_num))
-		net.train_on_data(data, 8000, 10, 0.001)
+		net.train_on_data(data, self.epocs, self.disp_round, self.error_rate)
 		return net
 
 	def fann_train_save(self, train_data, train_tar, net, savepath="./temp_save.conf"):
@@ -210,6 +213,21 @@ class NeuralNetworkTest:
 			if normalize:
 				test_array = self.normalize(test_array, self.m_min, self.m_max)
 			# print test_array
+			res[i, :] = net.run(test_array)
+		self.net = net
+		return res
+
+	def fann_wifi_test_recovered(self, class_num, test_data, normalize=True, savepath="./temp_save.conf"):
+		if not os.path.exists(savepath):
+			print "No File Included"
+			return []
+		net = libfann.neural_net()
+		net.create_from_file(savepath)
+		res = zeros((test_data.mat_res.mat.shape[0], class_num))
+		for i, test_array in enumerate(test_data.mat_res.mat):
+			if normalize:
+				# test_array = -test_array / 100.0
+				test_array = self.normalize(test_array, self.m_min, self.m_max)
 			res[i, :] = net.run(test_array)
 		self.net = net
 		return res
