@@ -112,6 +112,10 @@ class NeuralNetworkTest:
 	"""
 	THIS IS THE FANN TEST PART CLEANED UP FOR EASIER CALLING
 	"""
+
+	"""
+	Learning PART
+	"""
 	def fann_init_net(self, hidden_func=libfann.SIGMOID_SYMMETRIC_STEPWISE, output_func=libfann.SIGMOID_STEPWISE):
 		net = libfann.neural_net()
 		net.set_activation_function_hidden(hidden_func)
@@ -143,6 +147,18 @@ class NeuralNetworkTest:
 		net = self.fann_learn(train_data, train_tar)
 		net.save(savepath)
 		return net
+
+	def fann_learn_save_norm(self, train_data, train_tar, savepath="./temp_save.conf", normalize=True):
+		if normalize:
+			train_data = self.normalize(train_data,self.m_min,self.m_max)
+		net = self.fann_learn(train_data, train_tar)
+		net.save(savepath)
+		return net
+
+	"""
+	TEST FUNCTIONS
+
+	"""
 
 	# Cleaned Up Fast Build Of Network For Test With BLE Data
 	def fann_ble_test(self, data, test_data, normalize=True, savepath="./temp_save.conf"):
@@ -217,36 +233,4 @@ class NeuralNetworkTest:
 		self.net = net
 		return res
 
-	def fann_wifi_test_recovered(self, class_num, test_data, normalize=True, savepath="./temp_save.conf"):
-		if not os.path.exists(savepath):
-			print "No File Included"
-			return []
-		net = libfann.neural_net()
-		net.create_from_file(savepath)
-		res = zeros((test_data.shape[0], class_num))
-		for i, test_array in enumerate(test_data):
-			if normalize:
-				# test_array = -test_array / 100.0
-				test_array = self.normalize(test_array, self.m_min, self.m_max)
-			res[i, :] = net.run(test_array)
-		self.net = net
-		return res
 
-	def fann_wifi_test_recovered_accum(self, class_num, test_data, normalize=True, savepath="./temp_save.conf",\
-	                                   accum_depth=3):
-		if not os.path.exists(savepath):
-			print "No File Included"
-			return []
-		net = libfann.neural_net()
-		net.create_from_file(savepath)
-		res = zeros((test_data.shape[0], class_num))
-		for i, test_array in enumerate(test_data):
-			test_array_raw = test_data[max(0, i - accum_depth):i + 1, :]
-			test_array = self.stack_data(test_array_raw)[0]
-			if normalize:
-				# test_array = -test_array / 100.0
-				test_array = self.normalize(test_array, self.m_min, self.m_max)
-			# print test_array
-			res[i, :] = net.run(test_array.round())
-		self.net = net
-		return res
