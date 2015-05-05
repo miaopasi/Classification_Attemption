@@ -242,7 +242,7 @@ class NeuralNetworkTest:
 		res = zeros((test_data.shape[0], class_num))
 		for i, test_array in enumerate(test_data):
 			test_array_raw = test_data[max(0, i - accum_depth):i + 1, :]
-			test_array = self.stack_data(test_array_raw)
+			test_array = self.stack_data(test_array_raw)[0]
 			if normalize:
 				# test_array = -test_array / 100.0
 				test_array = self.normalize(test_array, self.m_min, self.m_max)

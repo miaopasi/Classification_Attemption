@@ -34,6 +34,23 @@ class LoadWifiData:
 	def test_print(cls):
 		print "Successfully loaded"
 
+	def _buildwifilist(self, filepath):
+		"""
+		:param : File Path of Wifi File
+		:rtype : List of Wifi Mac Address
+		"""
+		wifilist = []
+		f = open(filepath)
+		for l in f:
+			ls = l.split()
+			if len(ls) < 3:
+				continue;
+			for i in ls[1::2]:
+				if i not in wifilist:
+					wifilist.append(i)
+		f.close()
+		return wifilist
+
 	# @classmethod
 	def extract(self, wp_filepath, wifi_filepath):
 		self._extract(wp_filepath, wifi_filepath)
@@ -49,7 +66,7 @@ class LoadWifiData:
 	def _extract_wp(self, wp_filepath):
 		"""
 		:rtype : waypoint position, waypoint index
-		:param wp_filepath: 
+		:param wp_filepath:
 		"""
 		f = open(wp_filepath)
 		tmpwppos = np.zeros((80000, 2))
@@ -98,20 +115,36 @@ class LoadWifiData:
 				indpointer += 1
 		return wifimatrix
 
-	def _buildwifilist(self, filepath):
+	def extract_raw(self, wp_filepath, wifi_filepath):
+		self._extract_raw(wp_filepath, wifi_filepath)
+		return self.wp_wifi
+
+	def _extract_raw(self, wp_filepath, wifi_filepath):
+		wp_pos, wp_ind = self._extract_wp(wp_filepath)
+		self.wp_pos = wp_pos
+		self.wp_ind = wp_ind
+		self.wp_wifi = self._extract_wifi_with_wp_raw(wifi_filepath)
+
+	def _extract_wifi_with_wp_raw(self, wifi_filepath):
 		"""
-		:param : File Path of Wifi File
-		:rtype : List of Wifi Mac Address
+		:param : wifi_filepath
+		:rtype : wp_wifi dict
 		"""
-		wifilist = []
-		f = open(filepath)
+		# self.wifi_list = self._buildwifilist(wifi_filepath)
+		f = open(wifi_filepath)
+		# wifimatrix = np.zeros((len(self.wp_ind), len(self.wifi_list)))
+		wp_wifi = {}
+		indpointer = 0
 		for l in f:
 			ls = l.split()
-			if len(ls) < 3:
-				continue;
-			for i in ls[1::2]:
-				if i not in wifilist:
-					wifilist.append(i)
-		f.close()
-		return wifilist
-
+			if indpointer < len(self.wp_ind) and int(ls[0]) == self.wp_ind[indpointer]:
+				if len(ls) < 3:
+					indpointer += 1
+					continue
+				wifi_string = " ".join(ls[1:])
+				# print wifi_string
+				pos_string = "%s,%s" % (self.wp_pos[indpointer][0], self.wp_pos[indpointer][1])
+				# print pos_string
+				wp_wifi[pos_string] = wifi_string
+				indpointer += 1
+		return wp_wifi
