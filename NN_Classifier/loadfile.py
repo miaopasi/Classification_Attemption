@@ -63,6 +63,34 @@ class LoadWifiData:
 		self.wp_ind = wp_ind
 		self.wifi_matrix = self._extract_wifi_with_wp(wifi_filepath)
 
+	def extract_wifi(self, wifi_filepath, ref_list=[]):
+		self.wifi_matrix = self._extract_wifi(wifi_filepath, ref_list)
+		data = DataStorage("", wifi_filepath, self.wifi_list, [], [], self.wifi_matrix)
+		return data
+
+	def _extract_wifi(self, wifi_filepath, ref_list):
+		if ref_list:
+			self.wifi_list = ref_list;
+		else:
+			self.wifi_list = self._buildwifilist(wifi_filepath)
+		f = open(wifi_filepath)
+		lines = f.readlines()
+		f.close()
+		wifimatrix = np.zeros((len(lines), len(self.wifi_list)))
+		for i, l in enumerate(lines):
+			ls = l.split()
+			if len(ls)<3:
+				continue
+			for n in range(1, len(ls), 2):
+				mac = ls[n]
+				ss = int(ls[n + 1])
+				insert_pos = self.wifi_list.index(mac)
+				try:
+					wifimatrix[i, insert_pos] = ss
+				except Exception, e:
+					print e
+		return wifimatrix
+
 	def _extract_wp(self, wp_filepath):
 		"""
 		:rtype : waypoint position, waypoint index
