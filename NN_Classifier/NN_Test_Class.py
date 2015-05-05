@@ -223,8 +223,8 @@ class NeuralNetworkTest:
 			return []
 		net = libfann.neural_net()
 		net.create_from_file(savepath)
-		res = zeros((test_data.mat_res.mat.shape[0], class_num))
-		for i, test_array in enumerate(test_data.mat_res.mat):
+		res = zeros((test_data.shape[0], class_num))
+		for i, test_array in enumerate(test_data):
 			if normalize:
 				# test_array = -test_array / 100.0
 				test_array = self.normalize(test_array, self.m_min, self.m_max)
