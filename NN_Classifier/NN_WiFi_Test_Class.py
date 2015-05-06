@@ -142,7 +142,7 @@ class NeuralNetworkWifiTest(NeuralNetworkTest):
 		for x in cls_dict:
 			floor = cls_dict[x]
 			st = time.time()
-			res = self.fann_wifi_test_recovered_accum(class_num, floor_data[floor].wifi_bld_mat, False, rec_path, 10)
+			res = self.fann_wifi_test_recovered(class_num, floor_data[floor].wifi_bld_mat, False, rec_path)
 			ed = time.time()
 			print res
 			print "Time Comsumption: %s , Ave Time Consumption: %s" % (ed-st, (ed-st) / floor_data['F1'].wifi_bld_mat.shape[0])

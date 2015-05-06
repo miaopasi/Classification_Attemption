@@ -84,8 +84,8 @@ class LoadWifiData:
 			for n in range(1, len(ls), 2):
 				mac = ls[n]
 				ss = int(ls[n + 1])
-				insert_pos = self.wifi_list.index(mac)
 				try:
+					insert_pos = self.wifi_list.index(mac)
 					wifimatrix[i, insert_pos] = ss
 				except Exception, e:
 					print e
