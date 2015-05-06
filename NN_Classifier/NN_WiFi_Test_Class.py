@@ -1,7 +1,9 @@
 __author__ = 'Xiaolong Shen sxl@nexdtech.com'
+import time
+
 from NN_Test_Class import *
 from loadfile import LoadWifiData
-import time
+
 
 class NeuralNetworkWifiTest(NeuralNetworkTest):
 	def __init__(self):
@@ -116,7 +118,7 @@ class NeuralNetworkWifiTest(NeuralNetworkTest):
 		self.net = net
 		return res
 
-	def fann_wifi_train(self, floor_data, wifi_bld_list, td, save_path="wifi_floor.conf"):
+	def fann_wifi_train(self, floor_data, wifi_bld_list, td, save_path="wifi_floor.conf", normalize=True):
 		all_data_mat = zeros((td, len(wifi_bld_list)))
 		all_data_cls = zeros((td, len(floor_data.keys())))
 
@@ -129,11 +131,11 @@ class NeuralNetworkWifiTest(NeuralNetworkTest):
 			all_data_cls[pos_pt:pos_pt + d, i] = 1
 			pos_pt += d
 			cls_dict[i] = xx
-		net = self.fann_learn_save_norm(all_data_mat, all_data_cls, save_path, False)
+		net = self.fann_learn_save_norm(all_data_mat, all_data_cls, save_path, normalize)
 		self.net = net
 		return net
 
-	def fann_wifi_test(self, floor_data, rec_path="wifi_floor.conf"):
+	def fann_wifi_test(self, floor_data, rec_path="wifi_floor.conf", normalize=True):
 		cls_dict = {}
 		for i, xx in enumerate(floor_data):
 			cls_dict[i] = xx
@@ -142,7 +144,7 @@ class NeuralNetworkWifiTest(NeuralNetworkTest):
 		for x in cls_dict:
 			floor = cls_dict[x]
 			st = time.time()
-			res = self.fann_wifi_test_recovered(class_num, floor_data[floor].wifi_bld_mat, False, rec_path)
+			res = self.fann_wifi_test_recovered(class_num, floor_data[floor].wifi_bld_mat, normalize, rec_path)
 			ed = time.time()
 			print res
 			print "Time Comsumption: %s , Ave Time Consumption: %s" % (ed-st, (ed-st) / floor_data['F1'].wifi_bld_mat.shape[0])

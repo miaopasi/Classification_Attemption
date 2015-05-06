@@ -1,9 +1,10 @@
 __author__ = 'Xiaolong Shen sxl@nexdtech.com'
+
 from numpy import *
-from load_BLE_data import *
 import numpy
 from fann2 import libfann
-import os
+
+from load_BLE_data import *
 
 
 class NeuralNetworkTest:
@@ -150,7 +151,7 @@ class NeuralNetworkTest:
 
 	def fann_learn_save_norm(self, train_data, train_tar, savepath="./temp_save.conf", normalize=True):
 		if normalize:
-			train_data = self.normalize(train_data,self.m_min,self.m_max)
+			train_data = self.normalize(train_data, self.m_min, self.m_max)
 		net = self.fann_learn(train_data, train_tar)
 		net.save(savepath)
 		return net

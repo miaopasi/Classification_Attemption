@@ -1,6 +1,3 @@
-from loadfile import LoadWifiData
-import os
-from numpy import *
 from NN_WiFi_Test_Class import *
 #
 util = NeuralNetworkWifiTest()
@@ -11,8 +8,8 @@ train_save_path = "wifi_floor_train.npz"
 test_save_path = "wifi_floor_test.npz"
 net_path = "wifi_floor_xinzhongguan.conf"
 
-# floor_data, wifi_bld_list, td = util.load_wifi_data_new(dir_path, train_save_path)
-# net = util.fann_wifi_train(floor_data, wifi_bld_list, td, net_path)
+floor_data, wifi_bld_list, td = util.load_wifi_data_new(dir_path, train_save_path)
+net = util.fann_wifi_train(floor_data, wifi_bld_list, td, net_path)
 data = load(train_save_path)
 floor_data = data['floor'].item()
 wifi_bld_list = list(data['wifilist'])
